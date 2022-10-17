@@ -10,6 +10,7 @@ const sendMessage = async () => {
   const element = document.getElementById('messages-list')
   entryMessage.value.content = ''
   await nextTick()
+  // scroll to bottom when new message is added
   element.scrollTop = element.scrollHeight
 }
 
@@ -17,9 +18,20 @@ const sendMessage = async () => {
 
 <template>
   <div>
-    <h1>😀 KindChat</h1>
-    <span>Powered by Eden AI</span>
+
+    <h1>😊 KindChat</h1>
+    <div id="powered-by">
+      <span>Powered by </span>
+      <img src="./assets/edenai_logo.png" id="logo-edenai" width="70" alt="">
+    </div>
+
     <div id="messages-list">
+      <div class="default-message">
+        👋 Welcome to KindChat ! Only nice messages are allowed here.
+      </div>
+      <div class="default-message">
+        Thanks to Eden AI NLP APIs, your message will be analyzed and scored before being sent.
+      </div>
       <div class="validated-message" v-for="message in messagesList" :key="message">
         {{ message }}
       </div>
