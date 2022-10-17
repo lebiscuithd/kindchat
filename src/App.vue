@@ -1,31 +1,38 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, nextTick } from 'vue'
+
+let entryMessage = ref({ content: '', score: null })
+let messagesList = ref([])
+
+
+const sendMessage = async () => {
+  messagesList.value.push(entryMessage.value.content)
+  const element = document.getElementById('messages-list')
+  entryMessage.value.content = ''
+  await nextTick()
+  element.scrollTop = element.scrollHeight
+}
+
 </script>
 
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <h1>😀 KindChat</h1>
+    <span>Powered by Eden AI</span>
+    <div id="messages-list">
+      <div class="validated-message" v-for="message in messagesList" :key="message">
+        {{ message }}
+      </div>
+    </div>
+    <form id="input-area" @submit.prevent="sendMessage()">
+      <input v-model="entryMessage.content" id="input-message" type="text" placeholder="Type your kind message here"
+        minlength="1">
+      <button type="submit">Send message</button>
+    </form>
+
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
