@@ -30,7 +30,9 @@ const sendMessage = async () => {
         👋 Welcome to KindChat ! Only nice messages are allowed here.
       </div>
       <div class="default-message">
-        Thanks to Eden AI NLP APIs, your message will be analyzed and scored before being sent.
+        Thanks to <a target="_blank" href="https://edenai.co/">
+          Eden AI
+        </a>NLP APIs your message will be analyzed and scored before being sent.
       </div>
       <div class="validated-message" v-for="message in messagesList" :key="message">
         {{ message }}
