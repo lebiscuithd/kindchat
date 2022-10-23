@@ -37,6 +37,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #242424;
 }
 
 h1 {
@@ -139,4 +140,12 @@ button:hover {
   margin-top: 30px;
   margin-bottom: 30px;
   width: 50%;
+}
+
+.error-message {
+  color: red;
+  font-size: 1.5em;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: left;
 }
