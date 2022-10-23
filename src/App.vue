@@ -1,16 +1,61 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
+import axios from "axios"
 
-let entryMessage = ref({ content: '', score: null })
+let entryMessage = reactive({ content: '', score: null })
 let messagesList = ref([])
 
+const minimum_rate = 0.6
+const isPositive = computed(() => {
+  return entryMessage.score > minimum_rate
+})
+
+const languageDetection = () => {
+  const options = {
+    method: 'POST',
+    url: 'https://api.edenai.run/v2/translation/language_detection',
+    headers: {
+      authorization: 'Bearer ' + import.meta.env.VITE_API_KEY
+    },
+    data: {
+      providers: 'google',
+      text: entryMessage.content
+    }
+  };
+  return axios.request(options)
+}
+
+const sentimentAnalysis = (language) => {
+  const options = {
+    method: 'POST',
+    url: 'https://api.edenai.run/v2/text/sentiment_analysis',
+    headers: {
+      authorization: 'Bearer ' + import.meta.env.VITE_API_KEY
+    },
+    data: {
+      providers: 'microsoft',
+      text: entryMessage.content,
+      language: language
+    }
+  };
+
+  return axios.request(options)
+}
 
 const sendMessage = async () => {
-  messagesList.value.push(entryMessage.value.content)
-  const element = document.getElementById('messages-list')
-  entryMessage.value.content = ''
+  const languageResponse = await languageDetection()
+  const language = (languageResponse.data.google.items[0].language)
+  const sentimentResponse = await sentimentAnalysis(language)
+  entryMessage.score = sentimentResponse.data.microsoft.items.find(x => x.sentiment === "positive").sentiment_rate
+  if (isPositive.value) {
+    messagesList.value.push(entryMessage.content)
+    entryMessage.content = ''
+  } else {
+    return
+  }
   await nextTick()
   // scroll to bottom when new message is added
+  const element = document.getElementById('messages-list')
   element.scrollTop = element.scrollHeight
 }
 
@@ -43,7 +88,8 @@ const sendMessage = async () => {
         minlength="1">
       <button type="submit">Send message</button>
     </form>
-
+    <p class="error-message" v-if="!isPositive && entryMessage.score">😣 Your message is not kind enought ! Score :
+      {{entryMessage.score}}</p>
   </div>
 </template>
 
